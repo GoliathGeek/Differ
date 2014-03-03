@@ -8,9 +8,9 @@
 package com.alibaba.differ;
 
 /**
- * 类Differ.java的实现描述：TODO 类实现描述
- * @author xueliang.cxl 2014年2月28日 下午4:00:55
+ * 类Constants.java的实现描述：TODO 类实现描述
+ * @author xueliang.cxl 2014年2月28日 下午4:50:12
  */
-public class Differ {
+public class Constants {
 
 }
