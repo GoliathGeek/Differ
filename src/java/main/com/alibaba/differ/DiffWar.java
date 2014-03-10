@@ -8,9 +8,14 @@
 package com.alibaba.differ;
 
 /**
- * 类Constants.java的实现描述：TODO 类实现描述
- * @author xueliang.cxl 2014年2月28日 下午4:50:12
+ * 类DiffWar.java的实现描述：TODO 类实现描述
+ * 
+ * @author xueliang.cxl 2014年3月10日 上午11:10:05
  */
-public class Constants {
+public class DiffWar {
+
+    public static void main(String[] args) {
+
+    }
 
 }

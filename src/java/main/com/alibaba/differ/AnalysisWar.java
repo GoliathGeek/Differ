@@ -12,7 +12,7 @@ package com.alibaba.differ;
  * 
  * @author xueliang.cxl 2014年2月28日 下午4:00:55
  */
-public class WarAnalysisor {
+public class AnalysisWar {
 
     public static void main(String[] args) {
         

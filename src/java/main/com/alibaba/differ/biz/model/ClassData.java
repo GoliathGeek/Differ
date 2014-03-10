@@ -5,7 +5,7 @@
  * use it only in accordance with the terms of the license agreement you entered
  * into with Alibaba.com.
  */
-package com.alibaba.differ.model;
+package com.alibaba.differ.biz.model;
 
 import java.io.Serializable;
 
