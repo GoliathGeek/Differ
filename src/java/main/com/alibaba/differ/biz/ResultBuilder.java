@@ -11,6 +11,6 @@ package com.alibaba.differ.biz;
  * 类AnalysisorResultBuilder.java的实现描述：TODO 类实现描述
  * @author xueliang.cxl 2014年3月10日 上午11:04:38
  */
-public class AnalysisorResultBuilder {
+public class ResultBuilder {
 
 }
