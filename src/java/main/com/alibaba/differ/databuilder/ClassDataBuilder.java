@@ -1,25 +1,15 @@
 package com.alibaba.differ.databuilder;
 
 import com.alibaba.differ.AnalysisLevel;
-import com.alibaba.differ.DataBuilder;
 import com.alibaba.differ.model.ClassData;
 
-public class ClassDataBuilder implements DataBuilder {
+public class ClassDataBuilder extends AbstractDataBuilder<byte[], ClassData> {
 
-	private ClassData classData;
+    public ClassDataBuilder(AnalysisLevel analysisLevel){
+        super(analysisLevel);
+    }
 
-	private AnalysisLevel analisisLevel;
-
-	public ClassDataBuilder(AnalysisLevel analysisLevel) {
-		this.analisisLevel = analysisLevel;
-	}
-
-	public void buildData(Object origeData) {
-		classData = new ClassData();
-	}
-
-	public Object getResult() {
-		return classData;
-	}
-
+    public ClassData buildData(byte[] origeData) {
+        return new ClassData();
+    }
 }

@@ -8,59 +8,68 @@
 package com.alibaba.differ.databuilder;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import com.alibaba.differ.AnalysisLevel;
 import com.alibaba.differ.DataBuilder;
-import com.alibaba.differ.Processer;
+import com.alibaba.differ.DataProcesser;
 import com.alibaba.differ.model.JarData;
 import com.alibaba.differ.model.WarData;
-import com.alibaba.differ.processer.UnZipProcesser;
+import com.alibaba.differ.processer.JdkUnZipProcesser;
 
 /**
  * 类AnalysisorResultBuilder.java的实现描述：TODO 类实现描述
  * 
  * @author xueliang.cxl 2014年3月10日 上午11:04:38
  */
-@SuppressWarnings("unchecked")
-public class WarDataBuilder implements DataBuilder {
+public class WarDataBuilder implements DataBuilder<String, WarData> {
 
-	private Processer unZipProcesser = new UnZipProcesser();
+    private WarData                                 warData       = null;
 
-	private WarData warData = null;
+    private AnalysisLevel                           analysisLevel;
 
-	private AnalysisLevel analysisLevel;
+    DataProcesser<InputStream, Map<String, byte[]>> dataProcesser = new JdkUnZipProcesser();
 
-	public WarDataBuilder(AnalysisLevel analysisLevel) {
-		this.analysisLevel = analysisLevel;
-	}
+    public WarDataBuilder(AnalysisLevel analysisLevel){
+        this.analysisLevel = analysisLevel;
+    }
 
-	public WarData getResult() {
-		return warData;
-	}
+    public WarData getResult() {
+        return warData;
+    }
 
-	public void buildData(Object origeData) {
-		warData = new WarData();
-		Map<String, byte[]> jarHolder = (Map<String, byte[]>) origeData;
-		for (Entry<String, byte[]> entry : jarHolder.entrySet()) {
-			JarData jarData = this.buildJarData(entry);
-			warData.put(jarData.getName(), jarData);
-		}
+    public WarData buildData(String warFilePath) {
+        WarData warData = new WarData();
+        Map<String, byte[]> origeData;
+        try {
+            origeData = dataProcesser.process(new FileInputStream(new File(warFilePath)));
+            for (Entry<String, byte[]> entry : origeData.entrySet()) {
+                JarData jarData = this.buildJarData(entry);
+                if (jarData != null) {
+                    warData.put(jarData.getName(), jarData);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return warData;
+    }
 
-	}
-
-	private JarData buildJarData(Entry<String, byte[]> jarEntry) {
-		if (this.analysisLevel.getWeight() >= AnalysisLevel.C.getWeight()) {
-			InputStream jarInputStream = new ByteArrayInputStream(jarEntry.getValue());
-			DataBuilder jarDataBuilder = new JarDataBuilder(analysisLevel);
-			unZipProcesser.process(jarInputStream, jarDataBuilder);
-			JarData jarData = (JarData) jarDataBuilder.getResult();
-			jarData.setName(jarEntry.getKey());
-			return jarData;
-		}
-		return null;
-	}
+    private JarData buildJarData(Entry<String, byte[]> jarEntry) {
+        if (this.analysisLevel.getWeight() >= AnalysisLevel.J.getWeight()) {
+            InputStream jarInputStream = new ByteArrayInputStream(jarEntry.getValue());
+            DataBuilder<InputStream, JarData> jarDataBuilder = new JarDataBuilder(new JdkUnZipProcesser(),
+                                                                                  analysisLevel);
+            JarData jarData = jarDataBuilder.buildData(jarInputStream);
+            jarData.setName(jarEntry.getKey());
+            return jarData;
+        }
+        return null;
+    }
 
 }

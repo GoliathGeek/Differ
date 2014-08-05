@@ -1,14 +1,15 @@
 package com.alibaba.differ.processer;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.alibaba.differ.DataBuilder;
-import com.alibaba.differ.Processer;
+import com.alibaba.differ.DataProcesser;
 
-public class ClassLoaderProcesser implements Processer {
+public class ClassLoaderProcesser implements DataProcesser<InputStream, Map<String, String>> {
 
-	public void process(InputStream inputStream, DataBuilder builder) {
-		builder.buildData(inputStream);
-	}
+    public Map<String, String> process(InputStream inputStream) {
+        return new HashMap<String, String>();
+    }
 
 }

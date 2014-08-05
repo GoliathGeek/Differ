@@ -1,9 +1,7 @@
 package com.alibaba.differ;
 
+public interface DataBuilder<S, T> {
 
-public interface DataBuilder {
-	
-	public void buildData(Object origeData);
-	
-	public Object getResult();
+    public T buildData(S origeData);
+
 }
