@@ -10,6 +10,7 @@ package com.alibaba.differ.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.alibaba.differ.AnalysisLevel;
 import com.alibaba.differ.Analysisor;
 import com.alibaba.differ.model.WarData;
 
@@ -27,15 +28,19 @@ public class AnalysisWar {
             System.exit(0);
         }
 
-        Analysisor analysisor = new Analysisor();
         String warFilePath = args[0].trim();
         List<String> paramList = new ArrayList<String>();
         for (int i = 1; i < args.length; i++) {
             paramList.add(args[i].trim());
         }
-        WarData warData = analysisor.doAnalysis(warFilePath, paramList);
-
+        WarData warData = null;
+        AnalysisLevel analysisLevel = paramList != null && paramList.size() > 0 ? AnalysisLevel.getLevel(paramList.get(0)) : null;
+        Analysisor analysisor = new Analysisor();
+        if (analysisLevel == null) {
+            warData = analysisor.doAnalysis(warFilePath);
+        } else {
+            warData = analysisor.doAnalysis(warFilePath, analysisLevel);
+        }
         System.out.println(warData.toString());
-
     }
 }
