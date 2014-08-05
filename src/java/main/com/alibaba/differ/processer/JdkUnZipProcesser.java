@@ -11,7 +11,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipInputStream;
 
 import com.alibaba.differ.Constants;
-import com.alibaba.differ.DataBuilder;
 import com.alibaba.differ.DataProcesser;
 
 public class JdkUnZipProcesser implements DataProcesser<InputStream, Map<String, byte[]>> {

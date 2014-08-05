@@ -1,13 +1,10 @@
 package com.alibaba.differ;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import com.alibaba.differ.databuilder.WarDataBuilder;
 import com.alibaba.differ.model.WarData;
-import com.alibaba.differ.processer.JdkUnZipProcesser;
 
 public class Analysisor {
 
