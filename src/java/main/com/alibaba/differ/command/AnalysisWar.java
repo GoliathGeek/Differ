@@ -9,10 +9,13 @@ package com.alibaba.differ.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.alibaba.differ.AnalysisLevel;
 import com.alibaba.differ.Analysisor;
+import com.alibaba.differ.model.JarData;
 import com.alibaba.differ.model.WarData;
+import com.alibaba.differ.model.ZipFile;
 
 /**
  * 类Differ.java的实现描述：TODO 类实现描述
@@ -36,11 +39,37 @@ public class AnalysisWar {
         WarData warData = null;
         AnalysisLevel analysisLevel = paramList != null && paramList.size() > 0 ? AnalysisLevel.getLevel(paramList.get(0)) : null;
         Analysisor analysisor = new Analysisor();
+        long startTime = System.currentTimeMillis();
         if (analysisLevel == null) {
             warData = analysisor.doAnalysis(warFilePath);
         } else {
             warData = analysisor.doAnalysis(warFilePath, analysisLevel);
         }
-        System.out.println(warData.toString());
+        long endTime =System.currentTimeMillis();
+        System.out.println("cost:"+(endTime-startTime));
+        // llshowWarData(warData);
+    }
+
+    /**
+     * @param warData
+     */
+    private static void showWarData(WarData warData) {
+        for (Entry<String, ZipFile> entry : warData.entrySet()) {
+            System.out.println(entry.getKey());
+            ZipFile zipFile = entry.getValue();
+            if(zipFile instanceof JarData){
+                showJarData((JarData)zipFile);
+            }
+        }
+
+    }
+
+    /**
+     * @param jarData
+     */
+    private static void showJarData(JarData jarData) {
+        for (Entry<String, ZipFile> entry : jarData.entrySet()) {
+            System.out.println("-- " +entry.getKey());
+        }
     }
 }

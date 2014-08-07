@@ -7,25 +7,13 @@
  */
 package com.alibaba.differ.model;
 
-import java.util.HashMap;
-
 /**
  * 类ClassData.java的实现描述：TODO 类实现描述
  * @author xueliang.cxl 2014年3月3日 下午8:47:10
  */
-public class ClassData extends HashMap<String, MethodData> {
+public class ClassData extends ZipFile {
 
-	/**  */
-	private static final long serialVersionUID = -8475339024304898974L;
-
-	private String name;
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**  */
+    private static final long serialVersionUID = -8475339024304898974L;
 
 }
