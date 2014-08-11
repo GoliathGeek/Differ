@@ -29,6 +29,10 @@ public enum AnalysisLevel {
         return holder.get(analysisLevelStr);
     }
 
+    public boolean canDo(AnalysisLevel bizAnalysisLevel) {
+        return this.getWeight() >= bizAnalysisLevel.getWeight();
+    }
+
     public int getWeight() {
         return weight;
     }

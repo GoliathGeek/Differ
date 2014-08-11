@@ -9,6 +9,7 @@ import com.alibaba.differ.DataBuilder;
 import com.alibaba.differ.DataProcesser;
 import com.alibaba.differ.model.ClassData;
 import com.alibaba.differ.model.JarData;
+import com.alibaba.differ.model.ZipData;
 
 public class JarDataBuilder extends AbstractDataBuilder<InputStream, JarData> {
 
@@ -21,11 +22,19 @@ public class JarDataBuilder extends AbstractDataBuilder<InputStream, JarData> {
 
     public JarData buildData(InputStream inputStream) {
         JarData jarData = new JarData();
-        Map<String, byte[]> origeData = dataProcesser.process(inputStream);
-        for (Entry<String, byte[]> entry : origeData.entrySet()) {
-            ClassData classData = this.buildClassData(entry);
-            if (classData != null) {
-                jarData.put(classData.getName(), classData);
+        if (analysisLevel.canDo(AnalysisLevel.C)) {
+            Map<String, byte[]> origeData = dataProcesser.process(inputStream);
+            for (Entry<String, byte[]> entry : origeData.entrySet()) {
+                if (entry.getValue() != null) {
+                    ClassData classData = this.buildClassData(entry);
+                    if (classData != null) {
+                        jarData.put(classData.getName(), classData);
+                    }
+                } else {
+                    ZipData zipData = (ZipData) ZipData.getCloneTemplate().clone();
+                    zipData.setName(entry.getKey());
+                    jarData.put(entry.getKey(), zipData);
+                }
             }
         }
         return jarData;

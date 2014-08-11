@@ -20,6 +20,7 @@ import com.alibaba.differ.DataBuilder;
 import com.alibaba.differ.DataProcesser;
 import com.alibaba.differ.model.JarData;
 import com.alibaba.differ.model.WarData;
+import com.alibaba.differ.model.ZipData;
 import com.alibaba.differ.processer.JdkUnZipProcesser;
 
 /**
@@ -47,11 +48,19 @@ public class WarDataBuilder implements DataBuilder<String, WarData> {
         WarData warData = new WarData();
         Map<String, byte[]> origeData;
         try {
+            warData.setName(warFilePath);
             origeData = dataProcesser.process(new FileInputStream(new File(warFilePath)));
             for (Entry<String, byte[]> entry : origeData.entrySet()) {
-                JarData jarData = this.buildJarData(entry);
-                if (jarData != null) {
-                    warData.put(jarData.getName(), jarData);
+                if (entry.getValue() != null) {
+                    JarData jarData = this.buildJarData(entry);
+                    if (jarData != null) {
+                        warData.put(jarData.getName(), jarData);
+                    }
+                } else {
+                    // Ò»°ãÎÄ¼þ
+                    ZipData zipData = (ZipData) ZipData.getCloneTemplate().clone();
+                    zipData.setName(entry.getKey());
+                    warData.put(entry.getKey(), zipData);
                 }
             }
         } catch (FileNotFoundException e) {

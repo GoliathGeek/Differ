@@ -11,7 +11,7 @@ package com.alibaba.differ.model;
  * 类WarData.java的实现描述：TODO 类实现描述
  * @author xueliang.cxl 2014年3月3日 下午8:43:18
  */
-public class WarData extends ZipFile {
+public class WarData extends ZipData {
 
     /**
      * 

@@ -31,6 +31,8 @@ public class JdkUnZipProcesser implements DataProcesser<InputStream, Map<String,
                 if (this.needs(zipEntry)) {
                     byte[] data = this.getData(zipInputStream);
                     dataHolder.put(zipEntry.getName(), data);
+                } else {
+                    dataHolder.put(zipEntry.getName(), null);
                 }
                 zipEntry = zipInputStream.getNextEntry();
             }

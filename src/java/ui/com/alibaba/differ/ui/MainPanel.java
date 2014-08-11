@@ -35,6 +35,10 @@ import com.alibaba.differ.biz.PackgeFileFilter;
  */
 public class MainPanel extends JPanel {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7257377411110865585L;
     private JButton      jbtFile1;
     private JButton      jbtFile2;
     private JScrollPane  treePanel1;

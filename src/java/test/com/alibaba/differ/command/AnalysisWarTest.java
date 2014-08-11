@@ -11,7 +11,7 @@ public class AnalysisWarTest {
 	public void testMain() {
 		List<String> paramList = new ArrayList<String>();
 		paramList.add("D:/AliCode/jetty_server/channelcenter/target/root.war");
-		paramList.add("C");
+		paramList.add("J");
 		AnalysisWar.main(paramList.toArray(new String[paramList.size()]));
 	}
 

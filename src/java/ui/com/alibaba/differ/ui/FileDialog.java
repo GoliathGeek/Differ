@@ -18,6 +18,10 @@ import javax.swing.JTextArea;
  * @author frank.shaof 2014年8月4日 下午5:41:38
  */
 public class FileDialog extends JDialog{
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8979398021278160881L;
     private JTextArea jta;
     
     public FileDialog(String text){

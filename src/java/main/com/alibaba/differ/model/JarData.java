@@ -13,7 +13,7 @@ package com.alibaba.differ.model;
  * 
  * @author xueliang.cxl 2014年3月3日 下午8:44:58
  */
-public class JarData extends ZipFile {
+public class JarData extends ZipData {
 
     /**  */
     private static final long serialVersionUID = -637417581507152560L;

@@ -10,18 +10,25 @@ package com.alibaba.differ.model;
 import java.util.TreeMap;
 
 /**
- * 类ZipFile.java的实现描述：TODO 类实现描述 
+ * 类ZipFile.java的实现描述：压缩文件内容
  * @author xueliang.cxl 2014年8月7日 下午4:49:49
  */
-public class ZipFile extends TreeMap<String, ZipFile> {
+public class ZipData extends TreeMap<String, ZipData> implements Cloneable {
 
-    private String            name;
+    // 一般文件的模板
+    private static final ZipData normalFileTemplete  = new ZipData();
 
-    private Long              size;
+    private String               name;
+
+    private Long                 size;
     /**
      * 
      */
-    private static final long serialVersionUID = 1L;
+    private static final long    serialVersionUID = 1L;
+
+    public static ZipData getCloneTemplate() {
+        return normalFileTemplete;
+    }
 
     /**
      * @return the size
