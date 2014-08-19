@@ -19,14 +19,17 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
 
-import com.alibaba.diff.listener.FileTreeListener;
 import com.alibaba.differ.biz.FileTreeBuilder;
-import com.alibaba.differ.biz.PackgeFileFilter;
+import com.alibaba.differ.biz.PackageComparator;
+import com.alibaba.differ.filter.PackgeFileFilter;
+import com.alibaba.differ.global.UIConfig;
+import com.alibaba.differ.listener.FileReadListener;
 
 /**
  * 类MainPanel.java的实现描述：程序面板
@@ -35,18 +38,18 @@ import com.alibaba.differ.biz.PackgeFileFilter;
  */
 public class MainPanel extends JPanel {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -7257377411110865585L;
-    private JButton      jbtFile1;
-    private JButton      jbtFile2;
-    private JScrollPane  treePanel1;
-    private JScrollPane  treePanel2;
-    private JButton      jbtCompare;
-    private JRadioButton jarRadio;
-    private JRadioButton classRadio;
-    private JLabel       levelLabel;
+    private JButton           jbtFile1;
+    private JButton           jbtFile2;
+    private JScrollPane       treePanel1;
+    private JScrollPane       treePanel2;
+    private JButton           jbtCompare;
+    private JButton           jbtExit;
+    private JRadioButton      jarRadio;
+    private JRadioButton      classRadio;
+    private JRadioButton      plainRadio;
+    private JLabel            levelLabel;
+    private FileTreeBuilder   treeBuilder = new FileTreeBuilder();
+    private PackageComparator comparator  = new PackageComparator();
 
     public MainPanel(){
         // init all widgets
@@ -55,29 +58,28 @@ public class MainPanel extends JPanel {
         jbtCompare = new JButton("开始比较");
         jarRadio = new JRadioButton(".jar", true);
         classRadio = new JRadioButton(".class");
-        levelLabel=new JLabel("解析级别：");
+        plainRadio = new JRadioButton(".*");
+        levelLabel = new JLabel("解析级别：");
         ButtonGroup btnGroup = new ButtonGroup();
         btnGroup.add(jarRadio);
         btnGroup.add(classRadio);
+        btnGroup.add(plainRadio);
         treePanel1 = new JScrollPane();
         treePanel2 = new JScrollPane();
         Box boxFile1 = Box.createVerticalBox();
         Box boxFile2 = Box.createVerticalBox();
-        Box boxFile1Top=Box.createHorizontalBox();
+        Box boxCompare = Box.createHorizontalBox();
         treePanel1.setPreferredSize(new Dimension(UIConfig.TREE_SIZE_WIDTH, UIConfig.TREE_SIZE_HEIGHT));
         treePanel2.setPreferredSize(new Dimension(UIConfig.TREE_SIZE_WIDTH, UIConfig.TREE_SIZE_HEIGHT));
         treePanel1.setBorder(BorderFactory.createTitledBorder("包文件1的结构"));
         treePanel2.setBorder(BorderFactory.createTitledBorder("包文件2的结构"));
         // set box for file1
-        boxFile1Top.add(levelLabel);
-        boxFile1Top.add(jarRadio);
-        boxFile1Top.add(classRadio);
-        boxFile1Top.add(Box.createHorizontalStrut(20));
-        boxFile1Top.add(jbtFile1);
-        boxFile1.add(boxFile1Top);
+        boxFile1.add(Box.createVerticalStrut(20));
+        boxFile1.add(jbtFile1);
         boxFile1.add(Box.createVerticalStrut(20));
         boxFile1.add(treePanel1);
         // set box for file2
+        boxFile1.add(Box.createVerticalStrut(20));
         boxFile2.add(jbtFile2);
         boxFile2.add(Box.createVerticalStrut(20));
         boxFile2.add(treePanel2);
@@ -85,28 +87,51 @@ public class MainPanel extends JPanel {
         this.add(Box.createVerticalStrut(20));
         this.add(boxFile1);
         this.add(boxFile2);
-        this.add(jbtCompare);
+        boxCompare.add(levelLabel);
+        boxCompare.add(jarRadio);
+        boxCompare.add(classRadio);
+        boxCompare.add(jbtCompare);
+        this.add(boxCompare);
         // set click listeners, render tree
         jbtFile1.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                File file=MainPanel.this.getFileByChooser();
-                JTree tree=MainPanel.this.buildFileTree(file);
-                if(tree!=null){
+                File file = MainPanel.this.getFileByChooser();
+                JTree tree = treeBuilder.buildFileTree(file,UIConfig.JAR_CACHE_KEY_1,UIConfig.CLASS_CACHE_KEY_1);
+                if (tree != null) {
                     MainPanel.this.treePanel1.setViewportView(tree);
-                    tree.addTreeSelectionListener(new FileTreeListener(file,tree));
+                    tree.addMouseListener(new FileReadListener(tree));
                 }
             }
         });
         jbtFile2.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                File file=MainPanel.this.getFileByChooser();
-                JTree tree=MainPanel.this.buildFileTree(file);
-                if(tree!=null){
+                File file = MainPanel.this.getFileByChooser();
+                JTree tree = treeBuilder.buildFileTree(file,UIConfig.JAR_CACHE_KEY_2,UIConfig.CLASS_CACHE_KEY_2);
+                if (tree != null) {
                     MainPanel.this.treePanel2.setViewportView(tree);
-                    tree.addTreeSelectionListener(new FileTreeListener(file,tree));
+                    tree.addMouseListener(new FileReadListener(tree));
                 }
+            }
+        });
+        // compare two wars
+        jbtCompare.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                Object[][] data = null;
+                if(jarRadio.isSelected()){
+                    data=comparator.compareByJar();
+                }
+                else{
+                    data=comparator.compareByClass();
+                }
+                if(data==null){
+                    JOptionPane.showMessageDialog(null, "没有可供比较的包文件数据！");
+                    return;
+                }
+                CompareDialog compareDialog = new CompareDialog(data);
+                compareDialog.setVisible(true);
             }
         });
     }
@@ -116,13 +141,13 @@ public class MainPanel extends JPanel {
         frame.setTitle("包文件比较器");
         frame.add(new MainPanel());
         frame.setResizable(false);
-        frame.setSize(900, 600);
+        frame.setSize(UIConfig.TREE_SIZE_WIDTH * 2 + 100, UIConfig.TREE_SIZE_HEIGHT + 180);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     // file chooser initialization
-    private File getFileByChooser(){
+    private File getFileByChooser() {
         JFileChooser fc = new JFileChooser();
         fc.setFileHidingEnabled(true);
         fc.setFileFilter(new PackgeFileFilter());
@@ -131,23 +156,8 @@ public class MainPanel extends JPanel {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
             return file;
-        }
-        else{
+        } else {
             return null;
         }
-    }
-    
-    // build tree
-    private JTree buildFileTree(File file) {
-        JTree tree=null;
-        //jar level tree
-        if(jarRadio.isSelected()){
-            tree=FileTreeBuilder.buildFileTreeTilJar(file);
-        }
-        //class level tree
-        else{
-            //TODO
-        }
-        return tree;
     }
 }
